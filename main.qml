@@ -95,12 +95,13 @@ Window {
                 height: parent.height / 6
                 color: (modelData=="=")?( containMouse?(pressed ? "#0178D7" : "#036FC4"): "#104066" ): containMouse?(pressed ? "#d6d6d6" : "#737373") : (pressed ? "#d6d6d6" : "#111111")
                 text: modelData
-                onClicked: resultScreen.mainResultValue = digits.model[i]
+                onClicked: resultScreen.mainResultValue =  eventName
+
                 property string eventName: {
                     switch (text) {
                     case ".": return "POINT"
                     case "C": return "C"
-                    default: return "DIGIT." + text
+                    default: return text
                     }
                 }
             }

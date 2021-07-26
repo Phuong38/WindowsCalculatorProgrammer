@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "calculator.h"
 
 
 int main(int argc, char *argv[])
@@ -18,6 +19,8 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    calculator* m_calculator = calculator::getInstance();
 
     return app.exec();
 }
