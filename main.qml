@@ -8,6 +8,8 @@ Window {
     height: 681
     title: qsTr("Windows Calculator")
     color: "lightgray"
+//    signal qmlSignal(msg: string)
+//    property string mainResultV: _calculator.exp
 
     ResultScreen{
         id: resultScreen
@@ -25,7 +27,7 @@ Window {
             height: parent.height - 10
             width: height/imageRatio
             anchors.centerIn: parent
-            source: "icon/fullKeypadIcon.png"
+            source: "icon/full_keypad_icon.png"
         }
     }
 
@@ -34,6 +36,14 @@ Window {
         width: (parent.width-150)/4
         anchors.bottom: fullKeypadWindows.top
         anchors.left: fullKeypadFunctionButton.right
+        Image {
+            id: bitTogglingKeypadFunctionButton_icon
+            source: "icon/bit_toggling_keypad_icon.png"
+            property real imageRatio: sourceSize.height/sourceSize.width
+            height: parent.height - 10
+            width: height/imageRatio
+            anchors.centerIn: parent
+        }
     }
 
     FunctionButton{
@@ -95,12 +105,14 @@ Window {
                 height: parent.height / 6
                 color: (modelData=="=")?( containMouse?(pressed ? "#0178D7" : "#036FC4"): "#104066" ): containMouse?(pressed ? "#d6d6d6" : "#737373") : (pressed ? "#d6d6d6" : "#111111")
                 text: modelData
-                onClicked: resultScreen.mainResultValue =  eventName
+                onClicked:_calculator.onDigitClick(eventName)
 
                 property string eventName: {
                     switch (text) {
-                    case ".": return "POINT"
+                    case "=": return "="
                     case "C": return "C"
+                    case "X": return "*"
+                    case "÷": return "/"
                     default: return text
                     }
                 }

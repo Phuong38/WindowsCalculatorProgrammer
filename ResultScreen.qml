@@ -7,7 +7,7 @@ Rectangle {
     property int decResultValue : 0
     property int octResultValue : 0
     property int binResultValue : 1011
-    property string mainResultValue: "0"
+    property string mainResultValue: _calculator.mainResult
     id: resultScreen
     color:"#525353"
 

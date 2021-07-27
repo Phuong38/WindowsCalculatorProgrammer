@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "calculator.h"
+#include <QtQuick>
 
 
 int main(int argc, char *argv[])
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    calculator* m_calculator = calculator::getInstance();
-
+    QQmlContext *m_qmlContext = engine.rootContext();
+    m_qmlContext->setContextProperty("_calculator", calculator::getInstance());
     return app.exec();
 }
