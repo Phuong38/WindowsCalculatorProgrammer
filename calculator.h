@@ -26,12 +26,16 @@ public slots:
 private:
     int checkPriority(QChar c);
     bool isNumber(QChar c);
+    bool isOperator(QChar c);
 private:
     QString m_exp;
+    QString m_digit;
     QString m_mainResult;
     QString m_expResult;
     int m_count;
     int m_prePriority;
+    bool m_done;
+    bool m_negate;
 };
 
 #endif // CALCULATOR_H

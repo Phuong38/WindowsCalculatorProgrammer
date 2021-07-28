@@ -10,6 +10,7 @@ calculator::calculator()
 //    m_exp = '0';
     m_mainResult = '0';
     m_count = 0;
+    m_done = false;
 }
 
 calculator::~calculator()
@@ -27,7 +28,7 @@ calculator* calculator::getInstance()
 
 int calculator::checkPriority(QChar c)
 {
-    if (c == '*' || c == '/'){
+    if (c == 'x' || c == u'÷'){
         return 2;
     }
     else if (c == '+' || c == '-'){
@@ -41,6 +42,11 @@ int calculator::checkPriority(QChar c)
 bool calculator::isNumber(QChar c)
 {
     return (c >= '0' && c <= '9');
+}
+
+bool calculator::isOperator(QChar c)
+{
+    return (c == '+' || c == '-' || c == 'x' || c == u'÷');
 }
 
 QString calculator::converInfixToPostfix(QString s)
@@ -105,12 +111,12 @@ int calculator::calculate(QString exp)
     QStack<int> stk;
     int tmp1, tmp2;
     for (int i = 0; i < postfixExp.length(); i++){
-        if (postfixExp[i] == '*'){
+        if (postfixExp[i] == 'x'){
             tmp1 = stk.pop();
             tmp2 = stk.pop();
             stk.push(tmp1 * tmp2);
         }
-        else if (postfixExp[i] == '/'){
+        else if (postfixExp[i] == u'÷'){
             tmp1 = stk.pop();
             tmp2 = stk.pop();
             stk.push(tmp2 / tmp1);
@@ -144,34 +150,84 @@ void calculator::onDigitClick(QString _digit)
 {
     if (_digit == 'C'){
         setMainResult("0");
+        setExpResult("");
         m_exp = "";
+        m_digit = "";
+        m_done = false;
     }
-    else if ((_digit == '+' || _digit == '-' || _digit == '*' || _digit == '/')
-             && m_count != 0 && checkPriority(_digit.front()) <= m_prePriority){
-            setMainResult(QString::number(calculate(mainResult())));
-            m_exp = mainResult();
+    else if (_digit == "del"){
+        qDebug() << "del";
+        m_exp.remove(m_exp.length() - 1,m_exp.length());
+        setExpResult(m_exp);
+        m_digit.remove(m_digit.length() - 1, m_digit.length());
+        setMainResult(m_digit);
+    }
+    else if ((_digit == '+' || _digit == '-' || _digit == 'x' || _digit == u'÷')
+             && m_count != 0 && checkPriority(_digit.front()) <= m_prePriority && m_done == false){
+            setMainResult(QString::number(calculate(expResult())));
+            m_digit = "";
             m_exp.append(_digit);
-            setMainResult(m_exp);
             setExpResult(m_exp);
             m_prePriority = checkPriority(_digit.front());
     }
     else if (_digit != '='){
-        if (_digit == '+' || _digit == '-' || _digit == '*' || _digit == '/'){
-            m_count++;
-            m_prePriority = checkPriority(_digit.front());
+        if (m_done){
+            setExpResult(mainResult());
+            if (mainResult().toInt() < 0 && isOperator(_digit.front())){
+                m_exp = "(0";
+                m_exp.append(mainResult());
+                m_exp.append(")");
+            }
+            else{
+                m_exp = mainResult();
+            }
+            m_digit = "";
+            m_done = false;
         }
-        m_exp.append(_digit);
-        qDebug() << m_exp;
-        setMainResult(m_exp);
+        if (_digit == '+' || _digit == '-' || _digit == 'x' || _digit == u'÷'){
+//            if (isOperator(m_exp.back())){
+//                m_exp.remove(m_exp.length() - 1,m_exp.length());
+//                setExpResult(m_exp);
+//                m_exp.append(_digit);
+//                setExpResult(m_exp);
+//             }
+            // stuck here
+            if (_digit == '-' && (m_exp.isEmpty() || isOperator(m_exp.back()) || m_exp.back() == '(')){
+                m_exp.append("(0-");
+                m_digit = _digit;
+                m_negate = true;
+            }
+            else{
+                m_count++;
+                m_prePriority = checkPriority(_digit.front());
+                m_exp.append(_digit);
+                m_digit = "";
+            }
+        }
+        else{
+            if (m_exp == mainResult())
+                m_exp = "";
+            m_exp.append(_digit);
+            if (m_negate){
+                m_exp.append(")");
+                m_negate = false;
+            }
+            qDebug() << m_exp;
+            m_digit.append(_digit);
+            setMainResult(m_digit);
+        }
         setExpResult(m_exp);
     }
     else{
-        qDebug() << "bieu thuc" << mainResult();
-        qDebug() << "hau to" << converInfixToPostfix(mainResult());
-        int result = calculate(mainResult());
+        qDebug() << "bieu thuc" << expResult();
+        qDebug() << "hau to" << converInfixToPostfix(expResult());
+        int result = calculate(expResult());
         setMainResult(QString::number(result));
+        m_exp.append(_digit);
         setExpResult(m_exp);
+        m_done  = true;
         qDebug() << "result" << result;
+        qDebug() << "m_done" << m_done;
     }
 }
 
@@ -189,11 +245,20 @@ void calculator::setMainResult(QString _mainResult)
 
 QString calculator::expResult()
 {
+//    for (int i = 0; i < m_expResult.length(); i++){
+//        if (m_expResult[i] == '-' && (!isNumber(m_expResult[i-1]) || m_expResult[i-1] != ')'))
+//            m_expResult.insert(i - 1,'0');
+//    }
     return m_expResult;
 }
 
 void calculator::setExpResult(QString _exp)
 {
+//    for (int i = 0; i < _exp.length(); i++){
+//        if (_exp[i] == '0' && _exp[i+1] == '-'){
+//            _exp.remove(i,i);
+//        }
+//    }
     if (m_expResult == _exp)
         return;
     m_expResult = _exp;

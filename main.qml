@@ -5,11 +5,11 @@ Window{
     visible: true
     width: 320
     height: 500
-    property int subResultHeight: 30
+
     property int hexResultValue : 0
     property int decResultValue : 0
     property int octResultValue : 0
-    property int binResultValue : 1011
+    property int binResultValue : 0
     property string mainResultValue: _calculator.mainResult
     property string expResultValue: _calculator.expResult
     Item{
@@ -63,9 +63,16 @@ Window{
                  color: 'lightgray'
                  Text {
                      id: hexResultValues
-                     text: " HEX    " + hexResultValue
+                     text: '  HEX     ' + hexResultValue
                      font.pixelSize: 12
                      anchors.verticalCenter: parent.verticalCenter
+                     MouseArea{
+                         anchors.fill: parent
+                         onClicked: {
+                             hexKeyPad.opacity = 1
+                             hexKeyPad.enabled = true
+                         }
+                     }
                  }
              }
              Rectangle{
@@ -76,9 +83,16 @@ Window{
                  color: 'lightgray'
                  Text {
                      id: decResultValues
-                     text: ' DEC  ' + decResultValue
+                     text: '  DEC     ' + decResultValue
                      font.pixelSize: 12
                      anchors.verticalCenter: parent.verticalCenter
+                     MouseArea{
+                         anchors.fill: parent
+                         onClicked: {
+                             hexKeyPad.opacity =  0.2
+                             hexKeyPad.enabled = false
+                         }
+                     }
                  }
              }
              Rectangle{
@@ -89,7 +103,7 @@ Window{
                  color: 'lightgray'
                  Text {
                      id: octResultValues
-                     text: ' OCT  ' + octResultValue
+                     text: '  OCT     ' + octResultValue
                      font.pixelSize: 12
                      anchors.verticalCenter: parent.verticalCenter
                  }
@@ -102,7 +116,7 @@ Window{
                  color: 'lightgray'
                  Text {
                      id: binResultValues
-                     text: ' BIN  ' + binResultValue
+                     text: '  BIN      ' + binResultValue
                      font.pixelSize: 12
                      anchors.verticalCenter: parent.verticalCenter
                  }
@@ -245,6 +259,8 @@ Window{
                 id: hexKeyPad
                 width: parent.width / 5
                 height: parent.height
+                opacity: 0.3
+                enabled: false
                 Column{
                     Repeater{
                         id: hexKeyPadValues
@@ -273,6 +289,7 @@ Window{
                 height: parent.height * 1/3
                 anchors.top: parent.top
                 anchors.left: hexKeyPad.right
+                opacity: 0.6
                 color: 'lightgray'
                 Repeater{
                     id: functionKeypadValues
@@ -301,6 +318,7 @@ Window{
                 height: parent.height
                 anchors.top: parent.top
                 anchors.left: functionKeypad.right
+                opacity: 0.6
                 color: 'lightgray'
                 Column{
                     Repeater{
@@ -310,14 +328,14 @@ Window{
                             y: index *(operatorKeypad.height / 6)
                             width: operatorKeypad.width
                             height: operatorKeypad.height / 6
-                            color: (modelData === "=")?( containMouse?(pressed ? "lightgray" : "darkgray"): "#9a9a9a" ): containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                            color: (modelData == "=")?( containMouse?(pressed ? "lightgray" : "darkgray"): "#9a9a9a" ): containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                             text: modelData
-                            onClicked: _calculator.onDigitClick(text)
+                            onClicked: _calculator.onDigitClick(eventName)
                             property string eventName: {
                                 switch (text) {
-                                case ".": return "POINT"
-                                case "C": return "C"
-                                default: return "DIGIT." + text
+                                case "⌫": return "del"
+                                case "×": return "x"
+                                default: return text
                                 }
                             }
                         }
@@ -352,6 +370,7 @@ Window{
                         width: numberKeypad.width / 3
                         height: numberKeypad.height / 4
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                        enabled: (modelData == '.')?false:true
                         text: modelData
                         onClicked: _calculator.onDigitClick(text)
                     }
