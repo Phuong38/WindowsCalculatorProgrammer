@@ -4,8 +4,8 @@ Rectangle {
     id: keypadButton
     signal clicked
     property alias text: text.text
-    border.width: 2
     border.color: mouse.containsMouse?"white":"#1B1B1B"
+    border.width: 0.5
     property real textHeight: height - 2
     property real fontHeight: 0.5
     property bool pressed: mouse.pressed
@@ -20,7 +20,6 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.pixelSize: height * fontHeight
-        color: "white"
         font.family: "Open Sans Regular"
     }
 

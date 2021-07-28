@@ -1,122 +1,362 @@
-import QtQuick 2.11
-import QtQuick.Window 2.11
+import QtQuick 2.0
 
-Window {
-    id: mainWindow
+Window{
+    id: windowss
     visible: true
-    width: 322*1.5
-    height: 681
-    title: qsTr("Windows Calculator")
-    color: "lightgray"
-//    signal qmlSignal(msg: string)
-//    property string mainResultV: _calculator.exp
+    width: 320
+    height: 500
+    property int subResultHeight: 30
+    property int hexResultValue : 0
+    property int decResultValue : 0
+    property int octResultValue : 0
+    property int binResultValue : 1011
+    property string mainResultValue: _calculator.mainResult
+    property string expResultValue: _calculator.expResult
+    Item{
+        id: mainCalculator
+        width: parent.width
+        height: parent.height
+        Rectangle{
+             id:resultZone
+             width: parent.width
+             height: 190
+             color: 'lightgray'
+             Rectangle{
+                 id: expResult
+                 width: parent.width
+                 height: 25
+                 y:30
+                 color: 'lightgray'
+                 Text {
+                     id: expResultValues
+                     font.pixelSize: 20
+                     anchors.rightMargin: 20
+                     anchors.right: parent.right
+                     anchors.verticalCenter: parent.verticalCenter
+                     text: " " + expResultValue
+                 }
+             }
 
-    ResultScreen{
-        id: resultScreen
-        anchors.top: parent.top
-        anchors.bottom: fullKeypadFunctionButton.top
-    }
+             Rectangle{
+                 id: mainResult
+                 width: parent.width
+                 height: 35
+                 anchors.top: expResult.bottom
+                 border.color: 'black'
+                 color: 'lightgray'
+                 Text {
+                     id: mainResultValues
+                     text: "" + mainResultValue
+                     font.pixelSize: 25
+                     font.pointSize: 3
+                     anchors.rightMargin: 15
+                     anchors.right: parent.right
+                     anchors.verticalCenter: parent.verticalCenter
+                 }
+             }
 
-    FunctionButton{
-        id: fullKeypadFunctionButton
-        width: (parent.width-150)/4
-        anchors.bottom: fullKeypadWindows.top
-        anchors.left: parent.left
-        Image{
-            property real imageRatio: sourceSize.height/sourceSize.width
-            height: parent.height - 10
-            width: height/imageRatio
-            anchors.centerIn: parent
-            source: "icon/full_keypad_icon.png"
+             Rectangle{
+                 id: hexResult
+                 width: parent.width
+                 height: 25
+                 anchors.top: mainResult.bottom
+                 color: 'lightgray'
+                 Text {
+                     id: hexResultValues
+                     text: " HEX    " + hexResultValue
+                     font.pixelSize: 12
+                     anchors.verticalCenter: parent.verticalCenter
+                 }
+             }
+             Rectangle{
+                 id: decResult
+                 width: parent.width
+                 height: 25
+                 anchors.top: hexResult.bottom
+                 color: 'lightgray'
+                 Text {
+                     id: decResultValues
+                     text: ' DEC  ' + decResultValue
+                     font.pixelSize: 12
+                     anchors.verticalCenter: parent.verticalCenter
+                 }
+             }
+             Rectangle{
+                 id: octResult
+                 width: parent.width
+                 height: 25
+                 anchors.top: decResult.bottom
+                 color: 'lightgray'
+                 Text {
+                     id: octResultValues
+                     text: ' OCT  ' + octResultValue
+                     font.pixelSize: 12
+                     anchors.verticalCenter: parent.verticalCenter
+                 }
+             }
+             Rectangle{
+                 id: binResult
+                 width: parent.width
+                 height: 25
+                 anchors.top: octResult.bottom
+                 color: 'lightgray'
+                 Text {
+                     id: binResultValues
+                     text: ' BIN  ' + binResultValue
+                     font.pixelSize: 12
+                     anchors.verticalCenter: parent.verticalCenter
+                 }
+             }
         }
-    }
-
-    FunctionButton{
-        id: bitTogglingKeypadFunctionButton
-        width: (parent.width-150)/4
-        anchors.bottom: fullKeypadWindows.top
-        anchors.left: fullKeypadFunctionButton.right
-        Image {
-            id: bitTogglingKeypadFunctionButton_icon
-            source: "icon/bit_toggling_keypad_icon.png"
-            property real imageRatio: sourceSize.height/sourceSize.width
-            height: parent.height - 10
-            width: height/imageRatio
-            anchors.centerIn: parent
-        }
-    }
-
-    FunctionButton{
-        id: changeTypeFunctionButton
-        width: 150
-        anchors.bottom: fullKeypadWindows.top
-        anchors.left: bitTogglingKeypadFunctionButton.right
-        Text{
-            anchors.centerIn: parent
-            font.pixelSize: 20
-            text: "QWORD"
-            color: "white"
-        }
-    }
-
-    FunctionButton{
-        id: msFunctionButton
-        width: (parent.width-150)/4
-        anchors.bottom: fullKeypadWindows.top
-        anchors.left: changeTypeFunctionButton.right
-        Text{
-            anchors.centerIn: parent
-            font.pixelSize: 20
-            text: "MS"
-            color: "white"
-        }
-    }
-
-    FunctionButton{
-        id: mListFunctionButton
-        width: (parent.width-150)/4
-        anchors.bottom: fullKeypadWindows.top
-        anchors.left: msFunctionButton.right
-        anchors.right: parent.right
-        Text{
-            anchors.centerIn: parent
-            font.pixelSize: 20
-            text: "M▾"
-            color: "white"
-        }
-    }
-
-
-
-    Rectangle{
-        id: fullKeypadWindows
-        width: mainWindow.width
-        height: mainWindow.height/2
-        color: "#494949"
-        anchors.bottom: parent.bottom
-
-        Repeater{
-            id: digits
-            model: ["Lsh", "Rsh", "Or", "Xor", "Not", "And", "↑", "Mod", "CE", "C", "⌫", "÷", "A", "B", "7", "8", "9", "X", "C", "D", "4", "5", "6", "-", "E", "F", "1", "2", "3", "+", "(", ")", "+/-", "0", ".", "="]
-            KeypadButton {
-                x: (index % 6) * width
-                y: Math.floor(index / 6) * height
+        Rectangle{
+            id: menuZone
+            width: parent.width
+            height: 30
+            anchors.top: resultZone.bottom
+            color: 'lightgray'
+            Rectangle{
+                id: fullKeypad
                 width: parent.width / 6
-                height: parent.height / 6
-                color: (modelData=="=")?( containMouse?(pressed ? "#0178D7" : "#036FC4"): "#104066" ): containMouse?(pressed ? "#d6d6d6" : "#737373") : (pressed ? "#d6d6d6" : "#111111")
-                text: modelData
-                onClicked:_calculator.onDigitClick(eventName)
+                height: parent.height
+                border.color: 'black'
+                Image{
+                    property real imageRatio: sourceSize.height/sourceSize.width
+                    height: parent.height - 10
+                    width: height/imageRatio
+                    anchors.centerIn: parent
+                    source: "icon/full_keypad_icon.png"
+                }
+                MouseArea{
+                    anchors.fill: parent
+                }
+            }
+            Rectangle{
+                id: bittogglingKeypad
+                width: parent.width / 6
+                height: parent.height
+                anchors.left: fullKeypad.right
+                anchors.leftMargin: 6
+                border.color: 'black'
+                Image{
+                    property real imageRatio: sourceSize.height/sourceSize.width
+                    height: parent.height - 10
+                    width: height/imageRatio
+                    anchors.centerIn: parent
+                    source: "icon/bit_toggling_keypad_icon.png"
+                }
+                MouseArea{
+                    anchors.fill: parent
+                }
+            }
 
-                property string eventName: {
-                    switch (text) {
-                    case "=": return "="
-                    case "C": return "C"
-                    case "X": return "*"
-                    case "÷": return "/"
-                    default: return text
-                    }
+            Rectangle{
+                id: bittogglingOption
+                width: parent.width / 6 * 2 - 2*13
+                height: parent.height
+                anchors.left: bittogglingKeypad.right
+                anchors.leftMargin: 6
+                border.color: 'black'
+                Text {
+                    text: 'QWORD'
+                    anchors.centerIn: parent
+                    font.pixelSize: 18
+                }
+                MouseArea{
+                    anchors.fill: parent
+                }
+            }
+
+            Rectangle{
+                id: memoryStore
+                width: parent.width / 6
+                height: parent.height
+                anchors.left: bittogglingOption.right
+                anchors.leftMargin: 6
+                border.color: 'black'
+                Text {
+                    text: 'MS'
+                    anchors.centerIn: parent
+                    font.pixelSize: 18
+                }
+                MouseArea{
+                    anchors.fill: parent
+                }
+            }
+
+            Rectangle{
+                id: memory
+                width: parent.width / 6
+                height: parent.height
+                anchors.left: memoryStore.right
+                anchors.leftMargin: 6
+                border.color: 'black'
+                Text {
+                    text: 'M▾'
+                    anchors.centerIn: parent
+                    font.pixelSize: 18
+                }
+                MouseArea{
+                    anchors.fill: parent
                 }
             }
         }
+        Rectangle{
+            id:bitOptionZone
+            width: parent.width
+            height: 30
+            anchors.top: menuZone.bottom
+            color: 'lightgray'
+            Rectangle{
+                id: bitwise
+                height: parent.height
+                width: parent.width / 3
+                border.color: 'black'
+                Text {
+                    text: 'Bitwise ▾'
+                    anchors.centerIn: parent
+                    font.pixelSize: 18
+                }
+            }
+            Rectangle{
+                id: bitshift
+                height: parent.height
+                width: parent.width / 3
+                anchors.left: bitwise.right
+                anchors.leftMargin: 6
+                border.color: 'black'
+                border.width: 0.5
+                Text {
+                    text: 'Bitshift ▾'
+                    anchors.centerIn: parent
+                    font.pixelSize: 18
+                }
+                MouseArea{
+                    anchors.fill: parent
+                }
+            }
+        }
+        Rectangle{
+            id: keypad
+            width: parent.width
+            height: parent.height / 2
+            anchors.top: bitOptionZone.bottom
+            color:'lightgray'
+            Rectangle{
+                id: hexKeyPad
+                width: parent.width / 5
+                height: parent.height
+                Column{
+                    Repeater{
+                        id: hexKeyPadValues
+                        model: ["A", "B", "C", "D", "E", "F"]
+                        KeypadButton{
+                            y: index *(hexKeyPad.height / 6)
+                            width: hexKeyPad.width
+                            height: hexKeyPad.height / 6
+                            color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                            text: modelData
+                            onClicked: _calculator.onDigitClick(text)
+                            property string eventName: {
+                                switch (text) {
+                                case ".": return "POINT"
+                                case "C": return "C"
+                                default: return "DIGIT." + text
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Rectangle{
+                id: functionKeypad
+                width: parent.width * 3/5
+                height: parent.height * 1/3
+                anchors.top: parent.top
+                anchors.left: hexKeyPad.right
+                color: 'lightgray'
+                Repeater{
+                    id: functionKeypadValues
+                    model: ["<<", ">>", "C", "(", ")", "%"]
+                    KeypadButton{
+                        x: (index % 3) * width
+                        y: Math.floor(index / 3) * height
+                        width: functionKeypad.width / 3
+                        height: functionKeypad.height / 2
+                        color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                        text: modelData
+                        onClicked: _calculator.onDigitClick(text)
+                        property string eventName: {
+                            switch (text) {
+                            case ".": return "POINT"
+                            case "C": return "C"
+                            default: return "DIGIT." + text
+                            }
+                        }
+                    }
+                }
+            }
+            Rectangle{
+                id: operatorKeypad
+                width: parent.width / 5
+                height: parent.height
+                anchors.top: parent.top
+                anchors.left: functionKeypad.right
+                color: 'lightgray'
+                Column{
+                    Repeater{
+                        id: operatorKeypadValues
+                        model: ["⌫", "÷", "×", "-","+", "="]
+                        KeypadButton{
+                            y: index *(operatorKeypad.height / 6)
+                            width: operatorKeypad.width
+                            height: operatorKeypad.height / 6
+                            color: (modelData === "=")?( containMouse?(pressed ? "lightgray" : "darkgray"): "#9a9a9a" ): containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                            text: modelData
+                            onClicked: _calculator.onDigitClick(text)
+                            property string eventName: {
+                                switch (text) {
+                                case ".": return "POINT"
+                                case "C": return "C"
+                                default: return "DIGIT." + text
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle{
+                id: numberKeypad
+                width: parent.width *  3/5
+                height: parent.height * 2/3
+                anchors.top: functionKeypad.bottom
+                anchors.right: operatorKeypad.left
+                color: 'black'
+                Repeater{
+                    model: ["7", "8", "9", "4", "5", "6", "1", "2", "3"]
+                    KeypadButton{
+                        x: (index % 3) * width
+                        y: Math.floor(index / 3) * height
+                        width: numberKeypad.width / 3
+                        height: numberKeypad.height / 4
+                        color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                        text: modelData
+                        onClicked: _calculator.onDigitClick(text)
+                        }
+                    }
+                Repeater{
+                    model: ["+/-", "0", "."]
+                    KeypadButton{
+                        x: (index % 3) * width
+                        y:parent.height * 3/4
+                        width: numberKeypad.width / 3
+                        height: numberKeypad.height / 4
+                        color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                        text: modelData
+                        onClicked: _calculator.onDigitClick(text)
+                    }
+                }
+              }
+            }
     }
 }

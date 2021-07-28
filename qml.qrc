@@ -1,10 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>ResultScreen.qml</file>
-        <file>FunctionButton.qml</file>
         <file>KeypadButton.qml</file>
-        <file>Calculator.qml</file>
         <file>icon/bit_toggling_keypad_icon.png</file>
         <file>icon/full_keypad_icon.png</file>
     </qresource>

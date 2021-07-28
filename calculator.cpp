@@ -38,7 +38,7 @@ int calculator::checkPriority(QChar c)
     }
 }
 
-bool calculator::isNumber(QString c)
+bool calculator::isNumber(QChar c)
 {
     return (c >= '0' && c <= '9');
 }
@@ -113,7 +113,7 @@ int calculator::calculate(QString exp)
         else if (postfixExp[i] == '/'){
             tmp1 = stk.pop();
             tmp2 = stk.pop();
-            stk.push(tmp1 / tmp2);
+            stk.push(tmp2 / tmp1);
         }
         else if (postfixExp[i] == '-') {
             tmp1 = stk.pop();
@@ -140,11 +140,6 @@ int calculator::calculate(QString exp)
     return stk.pop();
 }
 
-void calculator::onTestConnect(const QString &msg)
-{
-    qDebug() << "em lam duoc roi " << msg;
-}
-
 void calculator::onDigitClick(QString _digit)
 {
     if (_digit == 'C'){
@@ -157,6 +152,7 @@ void calculator::onDigitClick(QString _digit)
             m_exp = mainResult();
             m_exp.append(_digit);
             setMainResult(m_exp);
+            setExpResult(m_exp);
             m_prePriority = checkPriority(_digit.front());
     }
     else if (_digit != '='){
@@ -167,12 +163,14 @@ void calculator::onDigitClick(QString _digit)
         m_exp.append(_digit);
         qDebug() << m_exp;
         setMainResult(m_exp);
+        setExpResult(m_exp);
     }
     else{
         qDebug() << "bieu thuc" << mainResult();
         qDebug() << "hau to" << converInfixToPostfix(mainResult());
         int result = calculate(mainResult());
         setMainResult(QString::number(result));
+        setExpResult(m_exp);
         qDebug() << "result" << result;
     }
 }
@@ -187,4 +185,17 @@ void calculator::setMainResult(QString _mainResult)
         return;
     m_mainResult = _mainResult;
     emit mainResultChanged(m_mainResult);
+}
+
+QString calculator::expResult()
+{
+    return m_expResult;
+}
+
+void calculator::setExpResult(QString _exp)
+{
+    if (m_expResult == _exp)
+        return;
+    m_expResult = _exp;
+    emit expResultChanged(m_expResult);
 }
