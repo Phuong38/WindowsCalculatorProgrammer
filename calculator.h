@@ -7,21 +7,45 @@ class calculator:public QObject
     Q_OBJECT
     Q_PROPERTY(QString mainResult READ mainResult WRITE setMainResult NOTIFY mainResultChanged)
     Q_PROPERTY(QString expResult READ expResult WRITE setExpResult NOTIFY expResultChanged)
+    Q_PROPERTY(QString binResult READ binResult WRITE setBinResult NOTIFY binResultChanged)
+    Q_PROPERTY(QString hexResult READ hexResult WRITE setHexResult NOTIFY hexResultChanged)
+    Q_PROPERTY(QString decResult READ decResult WRITE setDecResult NOTIFY decResultChanged)
+    Q_PROPERTY(QString octResult READ octResult WRITE setOctResult NOTIFY octResultChanged)
 public:
     calculator();
     ~calculator();
     static calculator* getInstance();
-    QString converInfixToPostfix(QString s);
+    QString convertInfixToPostfix(QString s);
     int calculate(QString exp);
     QString mainResult();
     void setMainResult(QString);
     QString expResult();
+    QString binResult();
+    QString hexResult();
+    QString decResult();
+    QString octResult();
     void setExpResult(QString);
+    void setBinResult(QString);
+    void setHexResult(QString);
+    void setDecResult(QString);
+    void setOctResult(QString);
+    QString DectoBin(int _dec);
+    QString convertDectoBin(int _dec);
+    int convertDectoOct(int _dec);
+    QString convertDectoHex(int _dec);
+    void setSubResult(QString _result);
+    QString negativeDectoBin(QString);
+
 signals:
-    void mainResultChanged(QString mainResult);
-    void expResultChanged(QString expResult);
+    void mainResultChanged(QString _mainResult);
+    void expResultChanged(QString _expResult);
+    void binResultChanged(QString _binResult);
+    void octResultChanged(QString _octResult);
+    void decResultChanged(QString _decResult);
+    void hexResultChanged(QString _hexResult);
 public slots:
     Q_INVOKABLE void onDigitClick(QString _digit);
+    Q_INVOKABLE void onOperatorClick(QString _operator);
 
 private:
     int checkPriority(QChar c);
@@ -32,10 +56,15 @@ private:
     QString m_digit;
     QString m_mainResult;
     QString m_expResult;
-    int m_count;
+    QString m_binResult;
+    QString m_decResult;
+    QString m_octResult;
+    QString m_hexResult;
+    int m_countOperator;
     int m_prePriority;
     bool m_done;
     bool m_negate;
+    bool m_needclose;
 };
 
 #endif // CALCULATOR_H

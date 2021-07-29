@@ -6,10 +6,10 @@ Window{
     width: 320
     height: 500
 
-    property int hexResultValue : 0
-    property int decResultValue : 0
-    property int octResultValue : 0
-    property int binResultValue : 0
+    property string hexResultValue : _calculator.hexResult
+    property string decResultValue : _calculator.decResult
+    property string octResultValue : _calculator.octResult
+    property string binResultValue : _calculator.binResult
     property string mainResultValue: _calculator.mainResult
     property string expResultValue: _calculator.expResult
     Item{
@@ -330,7 +330,7 @@ Window{
                             height: operatorKeypad.height / 6
                             color: (modelData == "=")?( containMouse?(pressed ? "lightgray" : "darkgray"): "#9a9a9a" ): containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                             text: modelData
-                            onClicked: _calculator.onDigitClick(eventName)
+                            onClicked: _calculator.onOperatorClick(eventName)
                             property string eventName: {
                                 switch (text) {
                                 case "⌫": return "del"
