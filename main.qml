@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import QtQuick.Controls 2.12
 Window{
     id: windowss
     visible: true
@@ -115,10 +115,12 @@ Window{
                  anchors.top: octResult.bottom
                  color: 'lightgray'
                  Text {
+                     anchors.leftMargin: 10
                      id: binResultValues
                      text: '  BIN      ' + binResultValue
                      font.pixelSize: 12
                      anchors.verticalCenter: parent.verticalCenter
+                     anchors.margins: right
                  }
              }
         }

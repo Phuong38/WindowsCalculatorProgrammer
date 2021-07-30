@@ -29,12 +29,12 @@ public:
     void setHexResult(QString);
     void setDecResult(QString);
     void setOctResult(QString);
-    QString DectoBin(int _dec);
+    QString DectoBin(signed long int _dec);
     QString convertDectoBin(int _dec);
-    int convertDectoOct(int _dec);
-    QString convertDectoHex(int _dec);
     void setSubResult(QString _result);
     QString negativeDectoBin(QString);
+    QString convertBintoHex(QString);
+    QString convertBintoOct(QString);
 
 signals:
     void mainResultChanged(QString _mainResult);
