@@ -46,11 +46,14 @@ signals:
 public slots:
     Q_INVOKABLE void onDigitClick(QString _digit);
     Q_INVOKABLE void onOperatorClick(QString _operator);
+    Q_INVOKABLE void onFunctionKeypadClick(QString);
+//    Q_INVOKABLE void onBitwiseOperatorClick(QString);
 
 private:
     int checkPriority(QChar c);
     bool isNumber(QChar c);
     bool isOperator(QChar c);
+//    bool isBitwise(QString);
 private:
     QString m_exp;
     QString m_digit;
@@ -65,6 +68,7 @@ private:
     bool m_done;
     bool m_negate;
     bool m_needclose;
+    bool m_isBitwise;
 };
 
 #endif // CALCULATOR_H

@@ -39,6 +39,9 @@ int calculator::checkPriority(QChar c)
     else if (c == '+' || c == '-'){
         return 1;
     }
+    else if (c == 'r' || c == 'l'){
+        return 2;
+    }
     else{
         return -1;
     }
@@ -51,13 +54,24 @@ bool calculator::isNumber(QChar c)
 
 bool calculator::isOperator(QChar c)
 {
-    return (c == '+' || c == '-' || c == 'x' || c == u'÷');
+    return (c == '+' || c == '-' || c == 'x' || c == u'÷' || c =='%'
+            || c == 'l' || c == 'r');
 }
 
 QString calculator::convertInfixToPostfix(QString s)
 {
     QStack<QChar> stack;
     stack.push('N');
+
+    for (int i = 0; i < s.length(); i++){
+        if (s[i] == 'R'){
+            s.replace(i,3,'r');
+        }
+        if (s[i] == 'L'){
+            s.replace(i,3,'l');
+        }
+    }
+
     int infixLength = s.length();
     QString postfixOutput;
 
@@ -135,6 +149,16 @@ int calculator::calculate(QString exp)
             tmp1 = stk.pop();
             tmp2 = stk.pop();
             stk.push(tmp1 + tmp2);
+        }
+        else if (postfixExp[i] == 'r'){
+            tmp1 = stk.pop();
+            tmp2 = stk.pop();
+            stk.push(tmp2 >> tmp1);
+        }
+        else if (postfixExp[i] == 'l'){
+            tmp1 = stk.pop();
+            tmp2 = stk.pop();
+            stk.push(tmp2 << tmp1);
         }
         else{
             if (isNumber(postfixExp[i])){
@@ -218,6 +242,10 @@ void calculator::onOperatorClick(QString _operator)
             m_exp.append(_operator);
             setExpResult(m_exp);
         }
+        else if (m_exp[m_exp.length() -1] == '>' || m_exp[m_exp.length() -1] == '<'){
+            m_exp.replace(m_exp.length() - 2, m_exp.length(), _operator);
+            setExpResult(m_exp);
+        }
         else if (checkPriority(_operator.back()) <= m_prePriority && m_countOperator != 0 && m_done == false){
             setMainResult(QString::number(calculate(expResult())));
             setSubResult(mainResult());
@@ -238,20 +266,7 @@ void calculator::onOperatorClick(QString _operator)
 
 void calculator::onDigitClick(QString _digit)
 {
-    if (_digit == 'C'){
-        setMainResult("0");
-        setExpResult("");
-        setBinResult("0");
-        setHexResult("0");
-        setOctResult("0");
-        setDecResult("0");
-        m_exp = "";
-        m_digit = "";
-        m_done = false;
-        m_prePriority = 0;
-        m_countOperator = 0;
-    }
-    else if (_digit == '(' || _digit == ')') {
+    if (_digit == '(' || _digit == ')') {
         m_exp.append(_digit);
         setExpResult(m_exp);
     }
@@ -265,16 +280,6 @@ void calculator::onDigitClick(QString _digit)
             setSubResult(m_digit);
             m_done = false;
         }
-//        else if (m_needclose == true){
-//            m_exp.append(_digit);
-//            m_exp.append(")");
-//            m_needclose = false;
-
-//            setExpResult(m_exp);
-//            m_digit.append(_digit);
-//            setMainResult(m_digit);
-//            setSubResult(m_digit);
-//        }
         else{
             m_exp.append(_digit);
             m_digit.append(_digit);
@@ -285,6 +290,71 @@ void calculator::onDigitClick(QString _digit)
         }
     }
 }
+
+void calculator::onFunctionKeypadClick(QString _func)
+{
+    if (_func == 'C'){
+        setMainResult("0");
+        setExpResult("");
+        setBinResult("0");
+        setHexResult("0");
+        setOctResult("0");
+        setDecResult("0");
+        m_exp = "";
+        m_digit = "";
+        m_done = false;
+        m_prePriority = 0;
+        m_countOperator = 0;
+    }
+    else if (_func == "<<" || _func == ">>"){
+        if (m_exp.isEmpty() || m_exp.back() == '('){
+            m_exp.append("(0");
+            m_exp.append(_func);
+            setExpResult(m_exp);
+            m_needclose = true;
+        }
+        else if (isOperator(m_exp.back())){
+            m_exp.remove(m_exp.length() -1, m_exp.length());
+            setExpResult(m_exp);
+            m_exp.append(_func);
+            setExpResult(m_exp);
+            m_digit = "";
+        }
+        else if (m_exp[m_exp.length() -1] == '>' || m_exp[m_exp.length() -1] == '<'){
+           qDebug() << m_exp;
+            m_exp.replace(m_exp.length() - 2, m_exp.length(), _func);
+            setExpResult(m_exp);
+        }
+        else{
+            m_countOperator++;
+            m_prePriority = 2;
+            m_exp.append(_func);
+            setExpResult(m_exp);
+            m_digit = "";
+        }
+    }
+    else if (_func == '%'){
+
+    }
+}
+
+//bool calculator::isBitwise(QString _bitw)
+//{
+//    return (_bitw == ">>" || _bitw == "<<" || _bitw == "AND" || _bitw == "OR" || _bitw == "XOR");
+//}
+
+//void calculator::onBitwiseOperatorClick(QString _bitw)
+//{
+//    if (m_exp.isEmpty() || m_exp.back() == '('){
+//        m_exp.append("(0");
+//        m_exp.append(_bitw);
+//        setExpResult(m_exp);
+//        m_needclose = true;
+//    }
+//    else if  (isOperator(m_exp.back())){
+
+//    }
+//}
 
 QString calculator::mainResult()
 {
@@ -305,6 +375,17 @@ QString calculator::expResult()
 
 void calculator::setExpResult(QString _exp)
 {
+    qDebug() << "_exp before: " << _exp;
+    for (int i = 0; i < _exp.length(); i++){
+        if (_exp[i] == '<' && _exp[i+1] == '<'){
+            _exp.replace(i,2,"Lsh");
+        }
+        if (_exp[i] == '>' && _exp[i+1] == '>'){
+            _exp.replace(i,2,"Rsh");
+        }
+    }
+
+    qDebug() << "_exp after replace: " << _exp;
     if (m_expResult == _exp)
         return;
     m_expResult = _exp;

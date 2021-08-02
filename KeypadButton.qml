@@ -4,7 +4,7 @@ Rectangle {
     id: keypadButton
     signal clicked
     property alias text: text.text
-    border.color: mouse.containsMouse?"white":"#1B1B1B"
+    border.color: mouse.containsMouse?"white":"lightgray"
     border.width: 0.5
     property real textHeight: height - 2
     property real fontHeight: 0.5

@@ -58,7 +58,7 @@ Window{
              Rectangle{
                  id: hexResult
                  width: parent.width
-                 height: 25
+                 height: 23
                  anchors.top: mainResult.bottom
                  color: 'lightgray'
                  Text {
@@ -78,7 +78,7 @@ Window{
              Rectangle{
                  id: decResult
                  width: parent.width
-                 height: 25
+                 height: 23
                  anchors.top: hexResult.bottom
                  color: 'lightgray'
                  Text {
@@ -98,7 +98,7 @@ Window{
              Rectangle{
                  id: octResult
                  width: parent.width
-                 height: 25
+                 height: 23
                  anchors.top: decResult.bottom
                  color: 'lightgray'
                  Text {
@@ -111,18 +111,33 @@ Window{
              Rectangle{
                  id: binResult
                  width: parent.width
-                 height: 25
+                 height: 41
                  anchors.top: octResult.bottom
                  color: 'lightgray'
-                 Text {
+                 Rectangle{
+                     id: bin
+                     color: parent.color
+                     width: 36; height: parent.height
+                     Text {
+                         y:3; x: 7
+                         text: 'BIN'
+                         font.pixelSize: 12
+                     }
+                 }
+                 Rectangle{
+                     height: parent.height
+                     width: parent.width - 36
+                     anchors.left: bin.right
                      anchors.leftMargin: 10
-                     id: binResultValues
-                     text: '  BIN      ' + binResultValue
-                     font.pixelSize: 12
-                     anchors.verticalCenter: parent.verticalCenter
-                     anchors.margins: right
+                     color: parent.color
+                     Text {
+                         y: 3
+                         text: binResultValue
+                         font.pixelSize: 12
+                     }
                  }
              }
+
         }
         Rectangle{
             id: menuZone
@@ -134,7 +149,7 @@ Window{
                 id: fullKeypad
                 width: parent.width / 6
                 height: parent.height
-                border.color: 'black'
+                color: parent.color
                 Image{
                     property real imageRatio: sourceSize.height/sourceSize.width
                     height: parent.height - 10
@@ -152,7 +167,7 @@ Window{
                 height: parent.height
                 anchors.left: fullKeypad.right
                 anchors.leftMargin: 6
-                border.color: 'black'
+                color: parent.color
                 Image{
                     property real imageRatio: sourceSize.height/sourceSize.width
                     height: parent.height - 10
@@ -171,7 +186,7 @@ Window{
                 height: parent.height
                 anchors.left: bittogglingKeypad.right
                 anchors.leftMargin: 6
-                border.color: 'black'
+                color: parent.color
                 Text {
                     text: 'QWORD'
                     anchors.centerIn: parent
@@ -188,7 +203,7 @@ Window{
                 height: parent.height
                 anchors.left: bittogglingOption.right
                 anchors.leftMargin: 6
-                border.color: 'black'
+                color: parent.color
                 Text {
                     text: 'MS'
                     anchors.centerIn: parent
@@ -205,7 +220,9 @@ Window{
                 height: parent.height
                 anchors.left: memoryStore.right
                 anchors.leftMargin: 6
-                border.color: 'black'
+                color: parent.color
+                enabled: false
+                opacity: 0.5
                 Text {
                     text: 'M▾'
                     anchors.centerIn: parent
@@ -226,7 +243,7 @@ Window{
                 id: bitwise
                 height: parent.height
                 width: parent.width / 3
-                border.color: 'black'
+                color: parent.color
                 Text {
                     text: 'Bitwise ▾'
                     anchors.centerIn: parent
@@ -239,8 +256,7 @@ Window{
                 width: parent.width / 3
                 anchors.left: bitwise.right
                 anchors.leftMargin: 6
-                border.color: 'black'
-                border.width: 0.5
+                color: parent.color
                 Text {
                     text: 'Bitshift ▾'
                     anchors.centerIn: parent
@@ -303,14 +319,7 @@ Window{
                         height: functionKeypad.height / 2
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                         text: modelData
-                        onClicked: _calculator.onDigitClick(text)
-                        property string eventName: {
-                            switch (text) {
-                            case ".": return "POINT"
-                            case "C": return "C"
-                            default: return "DIGIT." + text
-                            }
-                        }
+                        onClicked: _calculator.onFunctionKeypadClick(text)
                     }
                 }
             }
