@@ -249,6 +249,14 @@ Window{
                     anchors.centerIn: parent
                     font.pixelSize: 18
                 }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        bitwiseOption.visible = !bitwiseOption.visible
+                        keypad.focus = false
+                        bitwiseOption.focus = true
+                    }
+                }
             }
             Rectangle{
                 id: bitshift
@@ -268,7 +276,42 @@ Window{
             }
         }
         Rectangle{
+            id: bitwiseOption
+            visible: false
+            height: 90
+            width: parent.width * 3/5
+            z : 1
+            anchors.top: bitOptionZone.bottom
+            anchors.leftMargin: 20
+            color: 'lightgray'
+            opacity: 0.8
+            Repeater{
+                model: ["AND", "OR", "NOT", "NAND", "NOR", "XOR"]
+                KeypadButton{
+                    x: (index % 3) * width
+                    y: Math.floor(index / 3) * height
+                    width: bitwiseOption.width / 3
+                    height: bitwiseOption.height / 2
+                    color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
+                    text: modelData
+                    onClicked: _calculator.onOperatorClick(eventName)
+                    property string eventName: {
+                        switch (text) {
+                        case "AND": return "&"
+                        case "OR": return "|"
+                        case "XOR": return "^"
+                        case "NAND": return "$"
+                        case "NOR": return "#"
+                        case "NOT": return "~"
+                        default: return text
+                        }
+                    }
+                }
+            }
+        }
+        Rectangle{
             id: keypad
+            enabled: true
             width: parent.width
             height: parent.height / 2
             anchors.top: bitOptionZone.bottom
@@ -319,7 +362,14 @@ Window{
                         height: functionKeypad.height / 2
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                         text: modelData
-                        onClicked: _calculator.onFunctionKeypadClick(text)
+                        onClicked: _calculator.onOperatorClick(eventName)
+                        property string eventName: {
+                            switch (text) {
+                            case "<<": return "<"
+                            case ">>": return ">"
+                            default: return text
+                            }
+                        }
                     }
                 }
             }
