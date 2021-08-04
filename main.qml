@@ -12,6 +12,7 @@ Window{
     property string binResultValue : _calculator.binResult
     property string mainResultValue: _calculator.mainResult
     property string expResultValue: _calculator.expResult
+
     Item{
         id: mainCalculator
         width: parent.width
@@ -150,6 +151,7 @@ Window{
                 width: parent.width / 6
                 height: parent.height
                 color: parent.color
+                border.color: fullKeypadMouse.containsMouse?"black":"lightgray"
                 Image{
                     property real imageRatio: sourceSize.height/sourceSize.width
                     height: parent.height - 10
@@ -158,7 +160,9 @@ Window{
                     source: "icon/full_keypad_icon.png"
                 }
                 MouseArea{
+                    id: fullKeypadMouse
                     anchors.fill: parent
+                    hoverEnabled: true
                 }
             }
             Rectangle{
@@ -168,6 +172,7 @@ Window{
                 anchors.left: fullKeypad.right
                 anchors.leftMargin: 6
                 color: parent.color
+                border.color: bittogglingKeypadmouse.containsMouse?"black":"lightgray"
                 Image{
                     property real imageRatio: sourceSize.height/sourceSize.width
                     height: parent.height - 10
@@ -176,7 +181,9 @@ Window{
                     source: "icon/bit_toggling_keypad_icon.png"
                 }
                 MouseArea{
+                    id:bittogglingKeypadmouse
                     anchors.fill: parent
+                    hoverEnabled: true
                 }
             }
 
@@ -187,13 +194,16 @@ Window{
                 anchors.left: bittogglingKeypad.right
                 anchors.leftMargin: 6
                 color: parent.color
+                border.color: bittogglingOptionmouse.containsMouse?"black":"lightgray"
                 Text {
                     text: 'QWORD'
                     anchors.centerIn: parent
                     font.pixelSize: 18
                 }
                 MouseArea{
+                    id:bittogglingOptionmouse
                     anchors.fill: parent
+                    hoverEnabled: true
                 }
             }
 
@@ -204,13 +214,16 @@ Window{
                 anchors.left: bittogglingOption.right
                 anchors.leftMargin: 6
                 color: parent.color
+                border.color: memoryStoreMouse.containsMouse?"black":"lightgray"
                 Text {
                     text: 'MS'
                     anchors.centerIn: parent
                     font.pixelSize: 18
                 }
                 MouseArea{
+                    id:memoryStoreMouse
                     anchors.fill: parent
+                    hoverEnabled: true
                 }
             }
 
@@ -244,13 +257,16 @@ Window{
                 height: parent.height
                 width: parent.width / 3
                 color: parent.color
+                border.color: bitOptionZoneMouse.containsMouse?"black":"lightgray"
                 Text {
                     text: 'Bitwise ▾'
                     anchors.centerIn: parent
                     font.pixelSize: 18
                 }
                 MouseArea{
+                    id:bitOptionZoneMouse
                     anchors.fill: parent
+                    hoverEnabled: true
                     onClicked: {
                         bitwiseOption.visible = !bitwiseOption.visible
                         keypad.focus = false
@@ -265,13 +281,16 @@ Window{
                 anchors.left: bitwise.right
                 anchors.leftMargin: 6
                 color: parent.color
+                border.color: bitshiftMouse.containsMouse?"black":"lightgray"
                 Text {
                     text: 'Bitshift ▾'
                     anchors.centerIn: parent
                     font.pixelSize: 18
                 }
                 MouseArea{
+                    id: bitshiftMouse
                     anchors.fill: parent
+                    hoverEnabled: true
                 }
             }
         }
@@ -332,7 +351,11 @@ Window{
                             height: hexKeyPad.height / 6
                             color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                             text: modelData
-                            onClicked: _calculator.onDigitClick(text)
+                            onClicked:{
+                                bitwiseOption.visible = false
+                                 _calculator.onDigitClick(text)
+                            }
+
                             property string eventName: {
                                 switch (text) {
                                 case ".": return "POINT"
@@ -362,7 +385,11 @@ Window{
                         height: functionKeypad.height / 2
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                         text: modelData
-                        onClicked: _calculator.onOperatorClick(eventName)
+                        onClicked:{
+                            bitwiseOption.visible = false
+                            _calculator.onOperatorClick(eventName)
+                        }
+
                         property string eventName: {
                             switch (text) {
                             case "<<": return "<"
@@ -391,7 +418,11 @@ Window{
                             height: operatorKeypad.height / 6
                             color: (modelData == "=")?( containMouse?(pressed ? "lightgray" : "darkgray"): "#9a9a9a" ): containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                             text: modelData
-                            onClicked: _calculator.onOperatorClick(eventName)
+                            onClicked: {
+                                bitwiseOption.visible = false
+                                _calculator.onOperatorClick(eventName)
+                            }
+
                             property string eventName: {
                                 switch (text) {
                                 case "⌫": return "del"
@@ -420,7 +451,10 @@ Window{
                         height: numberKeypad.height / 4
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                         text: modelData
-                        onClicked: _calculator.onDigitClick(text)
+                        onClicked: {
+                            bitwiseOption.visible = false
+                            _calculator.onDigitClick(text)
+                        }
                         }
                     }
                 Repeater{
@@ -433,7 +467,10 @@ Window{
                         color: containMouse?(pressed ? "#d6d6d6" : "lightgray") : (pressed ? "#d6d6d6" : "white")
                         enabled: (modelData == '.')?false:true
                         text: modelData
-                        onClicked: _calculator.onDigitClick(text)
+                        onClicked: {
+                            bitwiseOption.visible = false
+                            _calculator.onDigitClick(text)
+                        }
                     }
                 }
               }

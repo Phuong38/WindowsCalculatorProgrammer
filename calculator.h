@@ -16,7 +16,7 @@ public:
     ~calculator();
     static calculator* getInstance();
     QString convertInfixToPostfix(QString s);
-    int calculate(QString exp);
+    QString calculate(QString exp);
     QString mainResult();
     void setMainResult(QString);
     QString expResult();

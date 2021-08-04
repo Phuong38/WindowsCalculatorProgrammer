@@ -16,7 +16,7 @@ calculator::calculator()
     m_octResult = '0';
     m_done = false;
     m_needclose = false;
-    qDebug()<< "test not"<<calculate("0~3)");
+//    qDebug() << "check not: " << calculate("2 2 ~ >");
 }
 
 calculator::~calculator()
@@ -35,18 +35,21 @@ calculator* calculator::getInstance()
 int calculator::checkPriority(QChar c)
 {
     if (c == '~'){
-        return 4;
+        return 6;
     }
-    if (c == 'x' || c == u'÷' || c == '%'){
-        return 3;
+    if (c == 'x' || c == u'÷' || c == '%' || c == '>' || c == '<'){
+        return 5;
     }
     else if (c == '+' || c == '-'){
-        return 2;
+        return 4;
     }
-    else if (c == '>' || c == '<'){
+    else if (c == '&' || c == '$'){
         return 3;
     }
-    else if (c == '&' || c == '|' || c == '^' || c == '#' || c == '$'){
+    else if (c == '^' || c == '#'){
+        return 2;
+    }
+    else if (c == '|' || c == '#'){
         return 1;
     }
     else{
@@ -148,7 +151,7 @@ QString calculator::convertInfixToPostfix(QString s)
     return postfixOutput;
 }
 
-int calculator::calculate(QString exp)
+QString calculator::calculate(QString exp)
 {
     QString postfixExp = convertInfixToPostfix(exp);
     qDebug() << "converted start calculate";
@@ -163,7 +166,12 @@ int calculator::calculate(QString exp)
         else if (postfixExp[i] == u'÷'){
             tmp1 = stk.pop();
             tmp2 = stk.pop();
-            stk.push(tmp2 / tmp1);
+            if (tmp1 == 0){
+                return "Cannot divide by zero";
+            }
+            else{
+                stk.push(tmp2 / tmp1);
+            }
         }
         else if (postfixExp[i] == '%'){
             tmp1 = stk.pop();
@@ -231,7 +239,7 @@ int calculator::calculate(QString exp)
             }
         }
     }
-    return stk.pop();
+    return QString::number(stk.pop());
 }
 
 void calculator::onOperatorClick(QString _operator)
@@ -254,17 +262,25 @@ void calculator::onOperatorClick(QString _operator)
             m_exp.append(_operator);
             m_exp.append("(0)");
             setExpResult(m_exp);
-        }else{
+        }
+        else if (m_done == true){
+            m_done = false;
+            m_exp.append(_operator);
+            m_exp.append("(" + mainResult() + ")");
+            setExpResult(m_exp);
+            setMainResult(calculate(expResult()));
+            setSubResult(calculate(expResult()));
+        }
+        else{
             QString tmp;
-            if (!isOperator(m_exp.back())){
+            if (!isOperator(m_exp.back()) && !isBitwise(m_exp.back())){
                 m_exp.remove(mainResult());
             }
-//            m_exp.remove(mainResult());
             tmp.append(_operator);
             tmp.append("(" + mainResult() + ")");
             m_exp.append(tmp);
             setExpResult(m_exp);
-            setMainResult(QString::number(calculate(tmp)));
+            setMainResult(calculate(tmp));
         }
     }
     else if (_operator == '(' || _operator == ')') {
@@ -279,14 +295,27 @@ void calculator::onOperatorClick(QString _operator)
         }
         qDebug() << "bieu thuc" << expResult();
         qDebug() << "hau to" << convertInfixToPostfix(expResult());
-        QString result = QString::number(calculate(expResult()));
-        setMainResult(result);
-        setSubResult(mainResult());
-        m_exp.append(_operator);
-        setExpResult(m_exp);
-        m_done  = true;
-        m_countOperator = 0;
-        m_prePriority = 0;
+        QString result = calculate(expResult());
+        if (result != "Cannot divide by zero"){
+            setMainResult(result);
+            setSubResult(mainResult());
+            m_exp.append(_operator);
+            setExpResult(m_exp);
+            m_done  = true;
+            m_digit = "";
+            m_exp = "";
+            m_countOperator = 0;
+            m_prePriority = 0;
+        }
+        else{
+            setMainResult(result);
+            setSubResult("");
+            m_done  = true;
+            m_digit = "";
+            m_exp = "";
+            m_countOperator = 0;
+            m_prePriority = 0;
+        }
         qDebug() << "result" << result;
         qDebug() << "m_done" << m_done;
     }
@@ -339,12 +368,20 @@ void calculator::onOperatorClick(QString _operator)
             setExpResult(m_exp);
         }
         else if (checkPriority(_operator.back()) <= m_prePriority && m_countOperator != 0 && m_done == false){
-            setMainResult(QString::number(calculate(expResult())));
-            setSubResult(mainResult());
-            m_digit = "";
-            m_exp.append(_operator);
-            setExpResult(m_exp);
-            m_prePriority = checkPriority(_operator.back());
+            if (calculate(expResult()) != "Cannot divide by zero"){
+                setMainResult(calculate(expResult()));
+                setSubResult(mainResult());
+                m_digit = "";
+                m_exp.append(_operator);
+                setExpResult(m_exp);
+                m_prePriority = checkPriority(_operator.back());
+            }
+            else{
+                setMainResult(calculate(expResult()));
+                setSubResult("");
+                m_digit = "";
+                m_exp = "";
+            }
         }
         else{
             m_countOperator++;
