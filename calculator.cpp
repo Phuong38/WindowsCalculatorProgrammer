@@ -7,7 +7,6 @@
 
 calculator::calculator()
 {
-//    m_exp = '0';
     m_mainResult = '0';
     m_countOperator = 0;
     m_binResult = '0';
@@ -16,7 +15,6 @@ calculator::calculator()
     m_octResult = '0';
     m_done = false;
     m_needclose = false;
-//    qDebug() << "check not: " << calculate("2 2 ~ >");
 }
 
 calculator::~calculator()
@@ -247,10 +245,7 @@ void calculator::onOperatorClick(QString _operator)
     if (_operator == 'C'){
         setMainResult("0");
         setExpResult("");
-        setBinResult("0");
-        setHexResult("0");
-        setOctResult("0");
-        setDecResult("0");
+        setSubResult("0");
         m_exp = "";
         m_digit = "";
         m_done = false;
@@ -345,7 +340,6 @@ void calculator::onOperatorClick(QString _operator)
         m_done = false;
     }
     else if (m_needclose == true){
-//        m_exp.append(_operator);
         m_exp.append(")");
         m_needclose = false;
 
@@ -438,7 +432,6 @@ QString calculator::expResult()
 
 void calculator::setExpResult(QString _exp)
 {
-    qDebug() << "_exp before: " << _exp;
     for (int i = 0; i < _exp.length(); i++){
         if (_exp[i] == '<'){
             _exp.replace(i,1,"Lsh");
@@ -466,7 +459,6 @@ void calculator::setExpResult(QString _exp)
         }
     }
 
-    qDebug() << "_exp after replace: " << _exp;
     if (m_expResult == _exp)
         return;
     m_expResult = _exp;
@@ -638,13 +630,10 @@ QString calculator::negativeDectoBin(QString a)
             }
         }
     }
-    qDebug() << "string: " << c;
-    qDebug() << "length: " << c.length();
     for (int i = 0; i < c.length(); i++){
         if (c[i] == ' ')
             c.remove(i,1);
     }
-    qDebug() << "c after remove: " << c;
     while(c.length() < 64){
         c.prepend("1");
     }
@@ -652,8 +641,6 @@ QString calculator::negativeDectoBin(QString a)
          if (i % 4 == 0)
             c.insert(i, " ");
      }
-    qDebug() << "bin am: " << c;
-    qDebug() << "length: " << c.length();
     return c;
 }
 
@@ -711,18 +698,15 @@ QString calculator::convertBintoHex(QString _bin)
 
 QString calculator::convertBintoOct(QString _bin)
 {
-    qDebug() << "bin to oct before remove: " << _bin;
     QString oct, tmp;
     for (int i = 0; i < _bin.length(); i++){
         if (_bin[i] == ' '){
             _bin.remove(i,1);
         }
     }
-    qDebug() << "bin to oct after remove: " << _bin;
     while (_bin.length() % 3 != 0) {
         _bin.prepend("0");
     }
-    qDebug() << "bin to oct: " << _bin;
     for (int i = 0; i < _bin.length(); i+=3){
         tmp = _bin.mid(i,3);
         if (tmp == "000" && i != 0)

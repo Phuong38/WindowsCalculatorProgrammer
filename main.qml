@@ -224,6 +224,11 @@ Window{
                     id:memoryStoreMouse
                     anchors.fill: parent
                     hoverEnabled: true
+                    onClicked: {
+                        memory.enabled = true
+                        memory.opacity = 1
+                        _memoryModel.insertData(_calculator.mainResult)
+                    }
                 }
             }
 
@@ -243,6 +248,128 @@ Window{
                 }
                 MouseArea{
                     anchors.fill: parent
+                    onClicked:{
+                        memoryList.visible = !memoryList.visible
+//                        menuZone.opacity = 0.3
+//                        resultZone.opacity = 0.3
+                    }
+                }
+            }
+        }
+        Rectangle{
+            id: memoryList
+            height: parent.height / 2 + 30
+            width: parent.width
+            color: "lightgray"
+            anchors.top: menuZone.bottom
+            visible: false
+            z : 1
+            Component {
+                id: memoryComponent
+                Rectangle {
+                    width: memoryList.width ; height: 95
+                    color: "lightgray"
+                    Rectangle{
+                        id: memoryControl
+                        width: 90
+                        height: 20
+                        color: "lightgray"
+                        x: parent.width - 130
+                        y: parent.height/6 + 30
+                        Rectangle{
+                            id:mclear
+                            width: 30
+                            height: 20
+                            color: mclearmouse.containsMouse?(mclearmouse.pressed ? "#d6d6d6" : "black") : (mclearmouse.pressed ? "#d6d6d6" : "white")
+                            Text {
+                                text: "MC"
+                                anchors.centerIn: parent
+                                color: mclearmouse.containsMouse?(mclearmouse.pressed ? "black" : "white") : (mclearmouse.pressed ? "black" : "black")
+                            }
+                            MouseArea{
+                                id:mclearmouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onClicked:
+                                    _memoryModel.removeData(model.index)
+                            }
+                        }
+                        Rectangle{
+                            id: mplus
+                            anchors.left: mclear.right
+                            anchors.leftMargin: 2
+                            width: 30
+                            height: 20
+                            color: mplusmouse.containsMouse?(mplusmouse.pressed ? "#d6d6d6" : "black") : (mplusmouse.pressed ? "#d6d6d6" : "white")
+                            Text {
+                                text: "M+"
+                                anchors.centerIn: parent
+                                color: mplusmouse.containsMouse?(mplusmouse.pressed ? "black" : "white") : (mplusmouse.pressed ? "black" : "black")
+                            }
+                            MouseArea{
+                                id: mplusmouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onClicked:
+                                    _memoryModel.onMplusClick(model.index)
+                            }
+                        }
+                        Rectangle{
+                            id:mmine
+                            anchors.left: mplus.right
+                            anchors.leftMargin: 2
+                            width: 30
+                            height: 20
+                            color: mminemouse.containsMouse?(mminemouse.pressed ? "#d6d6d6" : "black") : (mminemouse.pressed ? "#d6d6d6" : "white")
+                            Text {
+                                text: "M-"
+                                anchors.centerIn: parent
+                                color: mminemouse.containsMouse?(mminemouse.pressed ? "black" : "white") : (mminemouse.pressed ? "black" : "black")
+                            }
+                            MouseArea{
+                                id:mminemouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onClicked:
+                                    _memoryModel.onMmineClick(model.index)
+                            }
+                        }
+//                        MouseArea{
+//                            id:memoryControlMouse
+//                            anchors.fill: parent
+//                            hoverEnabled: true
+//                        }
+                    }
+
+                    Text
+                    {
+                        x: parent.width - 50
+                        y: parent.height/6
+                        text: model.value;
+                        font.pixelSize: 18
+                    }
+                }
+            }
+            ListView {
+                anchors.fill: parent
+                model: _memoryModel
+                delegate: memoryComponent
+                clip: true
+            }
+            Rectangle{
+                width: 32
+                height: 32
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                color: parent.color
+                Image {
+                    source: "icon/delete.png"
+                    anchors.fill: parent
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked:
+                        _memoryModel.onClearDataClick()
                 }
             }
         }

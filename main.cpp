@@ -1,7 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "calculator.h"
+#include "memory.h"
 #include <QtQuick>
+#include <QStringListModel>
+
 
 
 int main(int argc, char *argv[])
@@ -23,5 +26,8 @@ int main(int argc, char *argv[])
 
     QQmlContext *m_qmlContext = engine.rootContext();
     m_qmlContext->setContextProperty("_calculator", calculator::getInstance());
+
+    memory memoryModel;
+    m_qmlContext->setContextProperty("_memoryModel", &memoryModel);
     return app.exec();
 }
