@@ -29,6 +29,7 @@ public slots:
     void onClearDataClick();
 private:
     QVector<Data> m_data;
+    int key_value;
 };
 
 #endif // MEMORY_H

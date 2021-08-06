@@ -3,11 +3,6 @@
 memory::memory(QObject *parent) :
     QAbstractListModel(parent)
 {
-//    m_data
-//            << Data(0)
-//            << Data(10)
-//            << Data (20)
-//            << Data (30);
 
 }
 
@@ -51,6 +46,7 @@ void memory::removeData(int row)
 void memory::insertData(int data)
 {
     qDebug() << "insert data memory list";
+    key_value = data;
     QVector<Data> dataInsert;
     dataInsert << Data(data);
     beginInsertRows(QModelIndex(), 0, 0);
@@ -61,7 +57,7 @@ void memory::insertData(int data)
 void memory::onMplusClick(int row)
 {
     Data currentData = m_data[row];
-    currentData.value += m_data[0].value;
+    currentData.value += key_value;
     beginRemoveRows(QModelIndex(), row, row);
     m_data.removeAt(row);
     endRemoveRows();
@@ -73,7 +69,7 @@ void memory::onMplusClick(int row)
 void memory::onMmineClick(int row)
 {
     Data currentData = m_data[row];
-    currentData.value -= m_data[0].value;
+    currentData.value -= key_value;
     beginRemoveRows(QModelIndex(), row, row);
     m_data.removeAt(row);
     endRemoveRows();
@@ -85,7 +81,8 @@ void memory::onMmineClick(int row)
 void memory::onClearDataClick()
 {
    qDebug() << "length memory Lits: " << m_data.count();
-   for (int i = 0; i < m_data.count(); i++){
-       removeData(i);
-   }
+   key_value = 0;
+   beginResetModel();
+   m_data.clear();
+   endResetModel();
 }
