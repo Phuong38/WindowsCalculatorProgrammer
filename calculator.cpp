@@ -152,7 +152,7 @@ QString calculator::convertInfixToPostfix(QString s)
 QString calculator::calculate(QString exp)
 {
     QString postfixExp = convertInfixToPostfix(exp);
-    qDebug() << "converted start calculate";
+    qDebug() << "converted start calculate" << postfixExp;
     QStack<int> stk;
     int tmp1, tmp2;
     for (int i = 0; i < postfixExp.length(); i++){
@@ -281,6 +281,24 @@ void calculator::onOperatorClick(QString _operator)
     else if (_operator == '(' || _operator == ')') {
         m_exp.append(_operator);
         setExpResult(m_exp);
+    }
+    else if (_operator == '=' && m_done == true){
+        QString tmp = expResult().remove("=");
+        for (int  i = tmp.length() -1; i >= 0; i--){
+            if (isOperator(tmp[i]) || isBitwise(tmp[i])){
+                tmp.remove(0,i);
+                break;
+            }
+        }
+        if (mainResult().toInt() < 0){
+            tmp.prepend("(0" + mainResult() + ")");
+        }
+        else{
+            tmp.prepend(mainResult());
+        }
+        setExpResult(tmp);
+        setMainResult(calculate(tmp));
+        m_done = true;
     }
     else if (_operator == '='){
         if (m_needclose){
